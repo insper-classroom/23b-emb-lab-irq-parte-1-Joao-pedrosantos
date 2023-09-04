@@ -128,7 +128,7 @@ int main(void) {
 	tempo = 1000;
 	buffer[0] = '\0';
 
-int n = 0;
+
 	while (1) {
 		if (apertado) {
 			button_down_current++;
