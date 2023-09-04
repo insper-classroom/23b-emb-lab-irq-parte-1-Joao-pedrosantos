@@ -85,24 +85,6 @@ void but_callback(void)
   but_flag = 1;
 }
 
-void but_ex(void){
-	int timeout = 100;
-	int button_down_current = 0;
-	int button_down_threshold = 15000000;
-
-	while(!pio_get(BUT_PIO, PIO_INPUT, BUT_IDX_MASK)) {
-		button_down_current++;
-	}
-
-	if (button_down_current >= button_down_threshold) {
-		tempo += 1000;
-	}
-	else if (tempo > timeout) {
-		tempo -= timeout;
-	}
-
-	but_flag = 1;
-}
 
 /************************************************************************/
 /* funções                                                              */
@@ -146,7 +128,7 @@ void io_init(void)
                   BUT_PIO_ID,
                   BUT_IDX_MASK,
                   PIO_IT_EDGE,
-                  but_ex);
+                  but_callback);
 				  
    //pio_handler_set(BUT1_PIO,
 				   //BUT1_PIO_ID,

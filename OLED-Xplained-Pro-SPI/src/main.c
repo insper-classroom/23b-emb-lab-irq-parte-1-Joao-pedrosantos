@@ -34,7 +34,7 @@
 volatile char but_flag = 0;
 volatile int tempo = 0;
 char buffer[128];
-bool apertado = false;
+volatile bool apertado = false;
 int button_down_current = 0;
 
 /************************************************************************/
