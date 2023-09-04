@@ -12,7 +12,7 @@
 #define LED_IDX      8
 #define LED_IDX_MASK (1 << LED_IDX)
 
-// Botão
+// Botï¿½o
 #define BUT_PIO      PIOA
 #define BUT_PIO_ID   ID_PIOA
 #define BUT_IDX  11
@@ -27,15 +27,13 @@
 /************************************************************************/
 /* constants                                                            */
 /************************************************************************/
-int tempo = 0;
 
 /************************************************************************/
 /* variaveis globais                                                    */
 /************************************************************************/
 volatile char but_flag = 0;
-volatile char buffer[128];
-volatile bool apertado = false;
-volatile int button_down_current = 0;
+volatile bool but_flag_apertado = false;
+
 
 /************************************************************************/
 /* prototype                                                            */
@@ -49,7 +47,7 @@ void atualiza_frequencia();
 /************************************************************************/
 
 void but_raise(void) {
-	apertado = !apertado;
+	but_flag_apertado = !but_flag_apertado;
 	but_flag = 1;
 }
 
@@ -62,9 +60,9 @@ void pisca_led(int n, int t){
 }
 
 
-void atualiza_frequencia() {
-	snprintf(buffer, sizeof(buffer) / sizeof(char), "%f", ((float)tempo / (float)1000));
-}
+// void atualiza_frequencia() {
+// 	snprintf(buffer, sizeof(buffer) / sizeof(char), "%f", ((float)tempo / (float)1000));
+// }
 
 // Inicializa botao SW0 do kit com interrupcao
 void io_init(void)
@@ -86,17 +84,17 @@ void io_init(void)
 	pio_configure(LED_PIO, PIO_OUTPUT_0, LED_IDX_MASK, PIO_DEFAULT);
 	pio_configure(BUT1_PIO, PIO_INPUT, BUT1_PIO_IDX_MASK, PIO_DEFAULT);
 
-	// Inicializa clock do periférico PIO responsavel pelo botao
+	// Inicializa clock do perifï¿½rico PIO responsavel pelo botao
 	pmc_enable_periph_clk(BUT1_PIO_ID);
 
-	// Configura PIO para lidar com o pino do botão como entrada
+	// Configura PIO para lidar com o pino do botï¿½o como entrada
 	// com pull-up
 	pio_configure(BUT1_PIO, PIO_INPUT, BUT1_PIO_IDX_MASK, PIO_PULLUP | PIO_DEBOUNCE);
 	pio_set_debounce_filter(BUT1_PIO, BUT1_PIO_IDX_MASK, 60);
 
-	// Configura interrupção no pino referente ao botao e associa
-	// função de callback caso uma interrupção for gerada
-	// a função de callback é a: but_callback()
+	// Configura interrupï¿½ï¿½o no pino referente ao botao e associa
+	// funï¿½ï¿½o de callback caso uma interrupï¿½ï¿½o for gerada
+	// a funï¿½ï¿½o de callback ï¿½ a: but_callback()
 	//pio_handler_set(
 		//BUT1_PIO,
 		//BUT1_PIO_ID,
@@ -112,25 +110,28 @@ void io_init(void)
 		but_raise);
 
 
-	// Ativa interrupção e limpa primeira IRQ gerada na ativacao
+	// Ativa interrupï¿½ï¿½o e limpa primeira IRQ gerada na ativacao
 	pio_enable_interrupt(BUT1_PIO, BUT1_PIO_IDX_MASK);
 	pio_get_interrupt_status(BUT1_PIO);
 	
 	// Configura NVIC para receber interrupcoes do PIO do botao
-	// com prioridade 4 (quanto mais próximo de 0 maior)
+	// com prioridade 4 (quanto mais prï¿½ximo de 0 maior)
 	NVIC_EnableIRQ(BUT1_PIO_ID);
 	NVIC_SetPriority(BUT1_PIO_ID, 4); // Prioridade 4
 }
 
 int main(void) {
-	io_init();
-	but_flag = 0;
-	tempo = 1000;
+	int tempo = 1000;
+	char buffer[128];	
+	int button_down_current = 0;
+
 	buffer[0] = '\0';
+
+	io_init();
 
 
 	while (1) {
-		if (apertado) {
+		if (but_flag_apertado) {
 			button_down_current++;
 		}
 		else {
@@ -141,7 +142,7 @@ int main(void) {
 				else{
 					tempo += 100;
 				}
-				sprintf(buffer, "%d %d %d ", button_down_current, apertado, tempo);
+				sprintf(buffer, "%d %d %d ", button_down_current, but_flag_apertado, tempo);
 				gfx_mono_draw_string(buffer, 0, 16, &sysfont);
 				button_down_current = 0;
 			}
