@@ -62,7 +62,7 @@
 /* variaveis globais                                                    */
 /************************************************************************/
 volatile char but_flag = 0;
-volatile int tempo = 0;
+
 /************************************************************************/
 /* prototype                                                            */
 /************************************************************************/
@@ -157,15 +157,15 @@ void main(void)
 	io_init();
 
 	but_flag = 0;
-	tempo = 1000;
+	
 
 	// super loop
 	// aplicacoes embarcadas no devem sair do while(1).
 	while(1) {
-	  if (but_flag && tempo > 0) {  // (2)
-			pisca_led(30, tempo);
-			//but_flag = 0;
+	  if (but_flag) {  // (2)
+			pisca_led(30, 200);
+			but_flag = 0;
 	  }
-	  //pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
+	  pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
 	}
 }
