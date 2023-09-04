@@ -137,19 +137,25 @@ int main(void) {
 		else {
 			if (button_down_current > 0){
 				if (button_down_current >= 3){
-					tempo -= 100;
+					if (tempo > 100){
+					tempo -= 100;	
+					}
+					else{
+						tempo = 100;
+					}
 				}
 				else{
 					tempo += 100;
 				}
-				sprintf(buffer, "%d %d %d ", button_down_current, but_flag_apertado, tempo);
-				gfx_mono_draw_string(buffer, 0, 16, &sysfont);
+
 				button_down_current = 0;
 			}
 		}
 		if(but_flag){
 			pisca_led(30, tempo);
 		}
+		sprintf(buffer, "%d %d %d ", button_down_current, but_flag_apertado, tempo);
+		gfx_mono_draw_string(buffer, 0, 16, &sysfont);
 
 		// Handle LED blinking and other tasks here
 
